@@ -10,5 +10,4 @@ function [w, w0] = svm(traindata, trainclass, C)
 y = ones(size(trainclass, 2), 1);
 y(trainclass == 2) = -1;
 
-disp(y);
 end
