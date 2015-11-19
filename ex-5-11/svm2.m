@@ -1,8 +1,9 @@
-function [w, w0] = svm(traindata, trainclass, C)
-% Simple SVM method for finding boundary
+function testclass = svm2(traindata, trainclass, testdata, C)
+% Nonlinear SVM classification
 %
 %     'traindata' - training data.
 %    'trainclass' - classes for train data.
+%      'testdata' - data for testing.
 %             'C' - parameter that controls the penalty associated 
 %                   with an incorrect classification
 EPS = 0.0001;
@@ -15,7 +16,7 @@ x = traindata;
 H = zeros(N);
 for i = 1:N
     for j = 1:N
-        H(i, j) = y(i) * y(j) * x(:, i)' * x(:, j);
+        H(i, j) = y(i) * y(j) * Kern(x(:, i),  x(:, j));
     end
 end
 
@@ -27,13 +28,7 @@ UB = C * ones(N, 1);
 
 lambda = quadprog(H, f, [], [], Aeq, beq, LB, UB);
 
-% Calculate w
-w = zeros(size(x, 1),1);
-for i = 1:N
-    w = w + lambda(i) * y(i) * x(:,i);
-end
-
-% Calculate w0
+% Get supporting vector from class 1
 xk = 0;
 for i = 1:N
     if (trainclass(i) == 1 && abs(lambda(i)) > EPS)
@@ -42,6 +37,25 @@ for i = 1:N
         break;
     end
 end
-w0 = 1 - xk'*w;
+
+
+% Get result
+M = size(testdata, 2);
+testclass = ones(M, 1);
+for i = 1:M
+    
+    S = 1;
+    xt = testdata(:, i);
+    for k = 1:N
+        S = S + (lambda(k) * y(k) * Kern(x(:, k), xt) ...
+               - lambda(k) * y(k) * Kern(x(:, k), xk));
+    end
+    
+    if (S > 0)
+        testclass(i) = 1;
+    else 
+        testclass(i) = 2;
+    end
+end
 
 end
