@@ -22,8 +22,10 @@ dataClasses = ones(1, samplesNumber);
 % Load data
 for i = 1:samplesNumber
     tokens = regexp(files(i).name, 'p(\d+)m(\d+)d(\d+).mat', 'tokens');
-    dataClasses(i) = str2double(tokens{1}{2}); 
-    dataStruct{i} = load([dataFolder,files(i).name], '-ascii');
+    dataClasses(i) = str2double(tokens{1}{2});
+    d = load([dataFolder,files(i).name], '-ascii');
+    d = d ./ 255 * 2 - 1;
+    dataStruct{i} = d;
 end
 
 % Extend data with zeros.
