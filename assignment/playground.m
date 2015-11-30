@@ -32,10 +32,23 @@ for i = 1:samplesNumber
     data(1:l, :, i) = dataStruct{i};
 end
 
-% Demo
-C = pr_classify(data);
 
-% plot3(data(:,1,1), data(:,2,1), data(:,3,1))
+% Example
+bins = 10;
+filter = @(I) imgaussfilt(I);
+g = extract_gradient(dataStruct, bins, filter);
+
+% Plots for each class
+for i=1:7
+    is = find(dataClasses == i);
+    index = is(1);
+    
+    h = reshape(g(:,index), bins, bins);
+    subplot(3,3,i);
+    imshow(imresize(h, 20, 'nearest'));
+end
+
+
 
 
 
