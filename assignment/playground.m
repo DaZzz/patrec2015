@@ -2,7 +2,6 @@
 clc;
 clearvars;
 close all;
-addpath('');
 
 %%%
 % files: pXmYdZ where
@@ -11,14 +10,30 @@ addpath('');
 %     Z - index of demonstration
 %%%
 
-files = dir('./jedi_master_train/*.mat');
-m = cell(length(files), 1);
-for k = 1:length(files)
-    m{k} = load(files(k).name, '-ascii');
+files       = dir('./jedi_master_train/*.mat');
+samplesNumber = length(files);
+dataStruct  = cell(samplesNumber, 1);
+dataClasses = ones(samplesNumber,1);
+maxLength   = 0;
+
+% Load data
+for i = 1:samplesNumber
+    tokens = regexp(files(i).name, 'p(\d+)m(\d+)d(\d+).mat', 'tokens');
+    dataClasses(i) = str2double(tokens{1}{2}); 
+    moveTrace = load(files(i).name, '-ascii');
+    dataStruct{i} = moveTrace;
+    maxLength = max(size(moveTrace, 1), maxLength);
 end
 
-d = m{1};
-plot3(d(:,1), d(:,2), d(:,3));
+% Normalize data
+data = zeros(maxLength, 3, samplesNumber);
+for i = 1:samplesNumber
+    l = size(dataStruct{i}, 1);
+    data(1:l, :, i) = dataStruct{i};
+end
+
+% Demo
+% plot3(data(:,1,1), data(:,2,1), data(:,3,1))
 
 
 
