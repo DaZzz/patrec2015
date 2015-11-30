@@ -14,7 +14,7 @@ dataFolder  = './jedi_master_train/';
 files       = dir([dataFolder,'*.mat']);
 samplesNumber = length(files);
 dataStruct  = cell(samplesNumber, 1);
-dataClasses = ones(samplesNumber,1);
+dataClasses = ones(1, samplesNumber);
 maxLength   = 0;
 
 % Load data
@@ -27,18 +27,34 @@ for i = 1:samplesNumber
 end
 
 % Normalize data
-data = zeros(maxLength, 3, samplesNumber);
+timePointDimensions = size(dataStruct{1}, 2);
+sampleDimensions = maxLength*timePointDimensions;
+data = zeros(sampleDimensions, samplesNumber);
 for i = 1:samplesNumber
     l = size(dataStruct{i}, 1);
-    data(1:l, :, i) = dataStruct{i};
+    sample = zeros(maxLength, timePointDimensions);
+    sample(1:l, :) = dataStruct{i};
+    data(:, i) = sample(:);
 end
 
 % Plotting original and expanded data.
 sampleToPlot = randi(samplesNumber);
-subplot(1, 2, 1);
 plot3(dataStruct{sampleToPlot}(:,1), dataStruct{sampleToPlot}(:,2),...
     dataStruct{sampleToPlot}(:,3));
-subplot(1, 2, 2);
-plot3(data(:,1,sampleToPlot), data(:,2,sampleToPlot),...
-    data(:,3,sampleToPlot));
-fprintf('Label: %d', dataClasses(sampleToPlot));
+title(sprintf('Sample: %d\nLabel: %d', sampleToPlot,...
+    dataClasses(sampleToPlot)));
+
+% Generate training and testing sets.
+randomSampleOrder  = randperm(samplesNumber);
+trainingSamplesIDs = randomSampleOrder(1:end/2);
+testingSamplesIDs  = randomSampleOrder(end/2+1:end);
+trainingData = data(:,trainingSamplesIDs);
+trainingClasses = dataClasses(trainingSamplesIDs);
+testingData = data(:,testingSamplesIDs);
+testingClasses = dataClasses(testingSamplesIDs);
+testingSize = length(testingClasses);
+
+% Classify with knn.
+resultingClasses = knn(trainingClasses, trainingData, testingData, 1);
+disp('Error rate, %:');
+disp(length(find(resultingClasses ~= testingClasses))/testingSize*100);
