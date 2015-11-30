@@ -29,43 +29,18 @@ end
 % Extend data with zeros.
 data = extendWithZeros(dataStruct);
 
-% Experiment on classifying with different subsets.
-experimentsNumber = 10;
-k = 1;
-trainingSizePercentages = 10:10:100;
-trainingSizes = floor(samplesNumber/2*trainingSizePercentages/100);
-trainingSizesNumber = length(trainingSizes);
-meanKnnErrorRates = zeros(trainingSizesNumber, 1);
-meanRandomErrorRates = zeros(trainingSizesNumber, 1);
-knnErrorRateStds = zeros(trainingSizesNumber, 1);
-randomErrorRateStds = zeros(trainingSizesNumber, 1);
-for i = 1:trainingSizesNumber
-    knnErrorRates = zeros(experimentsNumber, 1);
-    randomErrorRates = zeros(experimentsNumber, 1);
-    for j = 1:experimentsNumber
-        % Generate training and testing sets.
-        randomSampleOrder  = randperm(samplesNumber);
-        trainingSamplesIDs = randomSampleOrder(1:trainingSizes(i));
-        testingSamplesIDs  = randomSampleOrder(end/2+1:end);
-        trainingData = data(:,trainingSamplesIDs);
-        trainingClasses = dataClasses(trainingSamplesIDs);
-        testingData = data(:,testingSamplesIDs);
-        testingClasses = dataClasses(testingSamplesIDs);
-        testingSize = length(testingClasses);
+% Methods to assess.
+knn1 = @(trainingClasses, trainingData, testingData)...
+        knn(trainingClasses, trainingData, testingData, 1);
+clRnd  = @(trainingClasses, trainingData, testingData)...
+    classifyRandomly(trainingClasses, testingData);
 
-        % Classify with knn.
-        knnClasses = knn(trainingClasses, trainingData, testingData, k);
-        randomClasses = classifyRandomly(trainingClasses, testingData);
-        knnErrorRates(j) = ...
-            length(find(knnClasses ~= testingClasses))/testingSize*100;
-        randomErrorRates(j) = ...
-            length(find(randomClasses ~= testingClasses))/testingSize*100;
-    end
-    meanKnnErrorRates(i) = mean(knnErrorRates);
-    meanRandomErrorRates(i) = mean(randomErrorRates);
-    knnErrorRateStds(i) = std(knnErrorRates);
-    randomErrorRateStds(i) = std(randomErrorRates);
-end
+% Method assession.
+trainingSizePercentages = 10:10:100;
+[meanKnnErrorRates, knnErrorRateStds] = assessMethod(data, dataClasses,...
+    knn1, trainingSizePercentages);
+[meanRandomErrorRates, randomErrorRateStds] = assessMethod(data,...
+    dataClasses, clRnd, trainingSizePercentages);
 
 % Plotting.
 subplot(1, 2, 1);
