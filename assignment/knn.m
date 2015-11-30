@@ -1,4 +1,4 @@
-function C = knn(trainclass, traindata, data, k)
+function C = knn(trainClasses, trainData, data, k)
 %KNN Performs classification using K-nearest neighbors.
 %   traindata  - matrix of training samples (vector-wise storage)
 %   trainclass - vector of class labels for training samples
@@ -7,7 +7,7 @@ function C = knn(trainclass, traindata, data, k)
 %   C          - vector of resulting class labels for testing samples
 
 % Params.
-clnum = max(trainclass); % Number of classes.
+clnum = max(trainClasses); % Number of classes.
 
 % Distance function.
 dstnc = @(x1, x2) norm(x1 - x2);
@@ -19,9 +19,9 @@ for i = 1:size(data, 2)
     nndsts = inf*ones(k, 1); % Distances from neighbours.
     nncls  = zeros(k, 1); % Classes of neighbors.
     % Search for nearest neighbors.
-    for j = 1:size(traindata, 2)
-        insdst = dstnc(data(:, i), traindata(:, j));
-        inscl  = trainclass(j);
+    for j = 1:size(trainData, 2)
+        insdst = dstnc(data(:, i), trainData(:, j));
+        inscl  = trainClasses(j);
         % Insert neighbor if one of the nearests.
         for n = 1:k
             if (insdst < nndsts(n))

@@ -37,13 +37,6 @@ for i = 1:samplesNumber
     data(:, i) = sample(:);
 end
 
-% Plotting original and expanded data.
-sampleToPlot = randi(samplesNumber);
-plot3(dataStruct{sampleToPlot}(:,1), dataStruct{sampleToPlot}(:,2),...
-    dataStruct{sampleToPlot}(:,3));
-title(sprintf('Sample: %d\nLabel: %d', sampleToPlot,...
-    dataClasses(sampleToPlot)));
-
 % Generate training and testing sets.
 randomSampleOrder  = randperm(samplesNumber);
 trainingSamplesIDs = randomSampleOrder(1:end/2);
@@ -55,6 +48,9 @@ testingClasses = dataClasses(testingSamplesIDs);
 testingSize = length(testingClasses);
 
 % Classify with knn.
-resultingClasses = knn(trainingClasses, trainingData, testingData, 1);
-disp('Error rate, %:');
-disp(length(find(resultingClasses ~= testingClasses))/testingSize*100);
+knnClasses = knn(trainingClasses, trainingData, testingData, 1);
+randomClasses = classifyRandomly(trainingClasses, testingData);
+disp('Knn error rate, %:');
+disp(length(find(knnClasses ~= testingClasses))/testingSize*100);
+disp('Random labeling error rate, %:');
+disp(length(find(randomClasses ~= testingClasses))/testingSize*100);
