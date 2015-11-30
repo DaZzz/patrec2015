@@ -11,14 +11,14 @@ for i=1:M
     is = randsample(TOTAL, N);
     t = classregtree(traindata(:,is)', ...
                      trainclass(:,is)', ...
-                    'splitcriterion', 'gdi');
+                    'method', 'classification');
     forest{i} = t;
 end
 
 results = [];
 % Apply function
 for i=1:M
-    results=[results; eval(forest{i}, data')'];
+    results=[results; str2double(eval(forest{i}, data')')];
 end
 
 classes = mode(results);
