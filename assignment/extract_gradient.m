@@ -36,8 +36,8 @@ for i=1:samplesNumber
         hst(bi,bj) = hst(bi, bj) + r;
     end
     
-    m = max(max(hst));
-    hst = filter(hst ./ m); % normalize and filter
+    s = sum(hst(:));
+    hst = filter(hst ./ s); % normalize and filter
     
     result(:, i) = hst(:); 
 end

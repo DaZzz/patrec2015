@@ -18,15 +18,12 @@ files       = dir([dataFolder,'*.mat']);
 samplesNumber = length(files);
 dataStruct  = cell(samplesNumber, 1);
 dataClasses = ones(1, samplesNumber);
-maxLength   = 0;
 
 % Load data
 for i = 1:samplesNumber
     tokens = regexp(files(i).name, 'p(\d+)m(\d+)d(\d+).mat', 'tokens');
     dataClasses(i) = str2double(tokens{1}{2}); 
-    moveTrace = load([dataFolder,files(i).name], '-ascii');
-    dataStruct{i} = moveTrace;
-    maxLength = max(size(moveTrace, 1), maxLength);
+    dataStruct{i} = load([dataFolder,files(i).name], '-ascii');
 end
 
 % Extend data with zeros.
@@ -108,22 +105,23 @@ data = extendWithZeros(dataStruct);
 % xlabel('Training set size percentage');
 
 % Example
-bins = 10;
-%filter = @(I) imgaussfilt(I);
-filter = @(I) I;
+bins = 8;
+filter = @(I) imgaussfilt(I, 0.5);
+%filter = @(I) I;
 g = extract_gradient(dataStruct, bins, filter);
 
 % Plots for each class
 classNumber = max(dataClasses);
-samplesPerClass = 7;
+samplesPerClass = 10;
 subplotCounter = 1;
+maxHistVal = max(g(:));
 for i=1:classNumber
     classSamples = find(dataClasses == i);
     indices = classSamples(randperm(length(classSamples),samplesPerClass));
     for j = 1:samplesPerClass
         h = reshape(g(:,indices(j)), bins, bins);
         subplot(classNumber,samplesPerClass,subplotCounter);
-        imshow(imresize(h, 20, 'nearest'));
+        imshow(imresize(h, 20, 'nearest'), [0 maxHistVal]);
         subplotCounter = subplotCounter + 1;
     end
 end
