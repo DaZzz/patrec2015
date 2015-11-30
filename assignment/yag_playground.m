@@ -3,6 +3,9 @@ clc;
 clearvars;
 close all;
 
+% Timer start.
+tic;
+
 %%%
 % files: pXmYdZ where
 %     X - number of person
@@ -37,20 +40,37 @@ for i = 1:samplesNumber
     data(:, i) = sample(:);
 end
 
-% Generate training and testing sets.
-randomSampleOrder  = randperm(samplesNumber);
-trainingSamplesIDs = randomSampleOrder(1:end/2);
-testingSamplesIDs  = randomSampleOrder(end/2+1:end);
-trainingData = data(:,trainingSamplesIDs);
-trainingClasses = dataClasses(trainingSamplesIDs);
-testingData = data(:,testingSamplesIDs);
-testingClasses = dataClasses(testingSamplesIDs);
-testingSize = length(testingClasses);
+% Experiment on classifying with different subsets.
+experimentsNumber = 100;
+knnErrorRates = zeros(experimentsNumber, 1);
+randomErrorRates = zeros(experimentsNumber, 1);
+for i = 1:experimentsNumber
+    % Generate training and testing sets.
+    randomSampleOrder  = randperm(samplesNumber);
+    trainingSamplesIDs = randomSampleOrder(1:end/2);
+    testingSamplesIDs  = randomSampleOrder(end/2+1:end);
+    trainingData = data(:,trainingSamplesIDs);
+    trainingClasses = dataClasses(trainingSamplesIDs);
+    testingData = data(:,testingSamplesIDs);
+    testingClasses = dataClasses(testingSamplesIDs);
+    testingSize = length(testingClasses);
 
-% Classify with knn.
-knnClasses = knn(trainingClasses, trainingData, testingData, 1);
-randomClasses = classifyRandomly(trainingClasses, testingData);
-disp('Knn error rate, %:');
-disp(length(find(knnClasses ~= testingClasses))/testingSize*100);
-disp('Random labeling error rate, %:');
-disp(length(find(randomClasses ~= testingClasses))/testingSize*100);
+    % Classify with knn.
+    knnClasses = knn(trainingClasses, trainingData, testingData, 1);
+    randomClasses = classifyRandomly(trainingClasses, testingData);
+    knnErrorRates(i) = ...
+        length(find(knnClasses ~= testingClasses))/testingSize*100;
+    randomErrorRates(i) = ...
+        length(find(randomClasses ~= testingClasses))/testingSize*100;
+end
+disp('Knn mean error rate, %:');
+disp(mean(knnErrorRates));
+disp('Random mean error rate, %:');
+disp(mean(randomErrorRates));
+disp('Knn error rate std, %:');
+disp(std(knnErrorRates));
+disp('Random error rate std, %:');
+disp(std(randomErrorRates));
+
+% Timer stop.
+toc;
