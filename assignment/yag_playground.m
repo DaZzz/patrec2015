@@ -34,11 +34,11 @@ for i = 1:samplesNumber
 end
 
 % Plotting original and expanded data.
+sampleToPlot = randi(samplesNumber);
 subplot(1, 2, 1);
-plot3(dataStruct{1}(:,1), dataStruct{1}(:,2), dataStruct{1}(:,3))
+plot3(dataStruct{sampleToPlot}(:,1), dataStruct{sampleToPlot}(:,2),...
+    dataStruct{sampleToPlot}(:,3));
 subplot(1, 2, 2);
-plot3(data(:,1,1), data(:,2,1), data(:,3,1))
-
-
-
-
+plot3(data(:,1,sampleToPlot), data(:,2,sampleToPlot),...
+    data(:,3,sampleToPlot));
+fprintf('Label: %d', dataClasses(sampleToPlot));
