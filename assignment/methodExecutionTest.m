@@ -30,7 +30,7 @@ for i = 1:samplesNumber
 end
 
 % Data.
-data = extendWithZeros(dataStruct);
+%data = extendWithZeros(dataStruct);
 %data = integrateSamples(dataStruct);
 
 % Extract histograms from data (no filtering).
@@ -42,16 +42,7 @@ bins = 8;
 filter = @(I) imgaussfilt(I, 0.5);
 %filter = @(I) imgaussfilt(I, 1);
 %data = extract_gradient(dataStruct, bins, filter);
-%data = extract_hist(dataStruct, bins, filter);
-
-% Methods to assess.
-knn1 = @(trainingClasses, trainingData, testingData)...
-        knn(trainingClasses, trainingData, testingData, 1);
-clRnd  = @(trainingClasses, trainingData, testingData)...
-    classifyRandomly(trainingClasses, testingData);
-
-% Method selection.
-classify = knn1;
+data = extract_hist(dataStruct, bins, filter);
 
 % Generate training and testing sets.
 randomSampleOrder  = randperm(samplesNumber);
@@ -62,14 +53,34 @@ trainingClasses = dataClasses(trainingSamplesIDs);
 testingData = data(:,testingSamplesIDs);
 testingClasses = dataClasses(testingSamplesIDs);
 testingSize = length(testingClasses);
+trainingSize = length(trainingClasses);
+
+% Methods to assess.
+knn1 = @(trainingClasses, trainingData, testingData)...
+        knn(trainingClasses, trainingData, testingData, 1);
+clRnd  = @(trainingClasses, trainingData, testingData)...
+    classifyRandomly(trainingClasses, testingData);
+trainedMLP = trainMLP(trainingData, trainingClasses, [6], 'tanh');
+mlp1l = @(trainingClasses, trainingData, testingData)...
+    trainedMLP(testingData);
+        
+
+% Method selection.
+classify = mlp1l;
 
 % Classify.
-classes = classify(trainingClasses, trainingData, testingData);
-errorRate = ...
-    length(find(classes ~= testingClasses))/testingSize*100;
+trainingResultClasses = classify(trainingClasses, trainingData,...
+    trainingData);
+trainingErrorRate = length(find(trainingResultClasses ~=...
+    trainingClasses))/trainingSize*100;
+testingResultClasses = classify(trainingClasses, trainingData, testingData);
+testingErrorRate = length(find(testingResultClasses ~=...
+    testingClasses))/testingSize*100;
 
-disp('Error rate:');
-disp(errorRate);
+disp('Training error rate:');
+disp(trainingErrorRate);
+disp('Testing error rate:');
+disp(testingErrorRate);
 
 % Timer stop.
 toc;

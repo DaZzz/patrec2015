@@ -33,7 +33,7 @@ dataExt = extendWithZeros(dataStruct);
 %dataExt = integrateSamples(dataStruct);
 
 % Extract histograms from data (no filtering).
-bins = 8;
+bins = 16;
 %dataHist8I = extract_gradient(dataStruct, bins);
 dataHist8I = extract_hist(dataStruct, bins);
 
