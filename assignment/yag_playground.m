@@ -30,14 +30,18 @@ end
 
 % Extend data with zeros.
 dataExt = extendWithZeros(dataStruct);
+%dataExt = integrateSamples(dataStruct);
 
 % Extract histograms from data (no filtering).
 bins = 8;
-dataHist8I = extract_gradient(dataStruct, bins);
+%dataHist8I = extract_gradient(dataStruct, bins);
+dataHist8I = extract_hist(dataStruct, bins);
 
 % Extract histograms from data (gaussian filtering).
 filter = @(I) imgaussfilt(I, 0.5);
-dataHist8G = extract_gradient(dataStruct, bins, filter);
+%filter = @(I) imgaussfilt(I, 1);
+%dataHist8G = extract_gradient(dataStruct, bins, filter);
+dataHist8G = extract_hist(dataStruct, bins, filter);
 
 % Methods to assess.
 knn1 = @(trainingClasses, trainingData, testingData)...

@@ -1,5 +1,5 @@
-function dataMatrix = integrateNormalized(dataStruct)
-%integrateNormalized Integrates normalized samples
+function dataMatrix = integrateSamples(dataStruct)
+%integrateNormalized Integrates samples
 %%%
 % Parameters:
 %   dataStruct - cells with matrices
@@ -14,7 +14,7 @@ dataMatrix = zeros(sampleDimensions, samplesNumber);
 for i = 1:samplesNumber
     l = size(dataStruct{i}, 1);
     sample = zeros(maxLength, timePointDimensions);
-    sample(1:l, :) = dataStruct{i}./255 - 0.5;
+    sample(1:l, :) = dataStruct{i};
     integr = zeros(size(sample, 1) + 1, size(sample, 2));
     for j = 1:size(sample, 1)
         integr(j+1,:) = integr(j,:) + sample(j,:);
