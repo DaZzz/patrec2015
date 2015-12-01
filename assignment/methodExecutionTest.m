@@ -32,6 +32,7 @@ end
 % Data.
 %data = extendWithZeros(dataStruct);
 %data = integrateSamples(dataStruct);
+data = extendAndFilter(dataStruct);
 
 % Extract histograms from data (no filtering).
 bins = 8;
@@ -42,7 +43,7 @@ bins = 8;
 filter = @(I) imgaussfilt(I, 0.5);
 %filter = @(I) imgaussfilt(I, 1);
 %data = extract_gradient(dataStruct, bins, filter);
-data = extract_hist(dataStruct, bins, filter);
+%data = extract_hist(dataStruct, bins, filter);
 
 % Generate training and testing sets.
 randomSampleOrder  = randperm(samplesNumber);
@@ -60,13 +61,13 @@ knn1 = @(trainingClasses, trainingData, testingData)...
         knn(trainingClasses, trainingData, testingData, 1);
 clRnd  = @(trainingClasses, trainingData, testingData)...
     classifyRandomly(trainingClasses, testingData);
-trainedMLP = trainMLP(trainingData, trainingClasses, [6], 'tanh');
-mlp1l = @(trainingClasses, trainingData, testingData)...
-    trainedMLP(testingData);
+% trainedMLP = trainMLP(trainingData, trainingClasses, [6], 'tanh');
+% mlp1l = @(trainingClasses, trainingData, testingData)...
+%     trainedMLP(testingData);
         
 
 % Method selection.
-classify = mlp1l;
+classify = knn1;
 
 % Classify.
 trainingResultClasses = classify(trainingClasses, trainingData,...

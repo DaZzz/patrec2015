@@ -29,8 +29,9 @@ for i = 1:samplesNumber
 end
 
 % Extend data with zeros.
-dataExt = extendWithZeros(dataStruct);
+%dataExt = extendWithZeros(dataStruct);
 %dataExt = integrateSamples(dataStruct);
+dataExt = extendAndFilter(dataStruct);
 
 % Extract histograms from data (no filtering).
 bins = 16;
@@ -53,25 +54,25 @@ clRnd  = @(trainingClasses, trainingData, testingData)...
 trainingSizePercentages = 10:10:100;
 [knn1ExtMeanER, knn1ExtStdER] = assessMethod(dataExt, dataClasses,...
     knn1, trainingSizePercentages);
-[rndMeanER, rndStdER] = assessMethod(dataExt,...
-    dataClasses, clRnd, trainingSizePercentages);
-[knn1HIMeanER, knn1HIStdER] = assessMethod(dataHist8I, dataClasses,...
-    knn1, trainingSizePercentages);
-[knn1HGMeanER, knn1HGStdER] = assessMethod(dataHist8G, dataClasses,...
-    knn1, trainingSizePercentages);
+% [rndMeanER, rndStdER] = assessMethod(dataExt,...
+%     dataClasses, clRnd, trainingSizePercentages);
+% [knn1HIMeanER, knn1HIStdER] = assessMethod(dataHist8I, dataClasses,...
+%     knn1, trainingSizePercentages);
+% [knn1HGMeanER, knn1HGStdER] = assessMethod(dataHist8G, dataClasses,...
+%     knn1, trainingSizePercentages);
 
 % Plotting.
 subplot(2, 2, 1);
 plotMethodStats(knn1ExtMeanER, knn1ExtStdER, trainingSizePercentages,...
-    sprintf('Knn1\nExtended samples'));
-subplot(2, 2, 2);
-plotMethodStats(rndMeanER, rndStdER, trainingSizePercentages, 'Random');
-subplot(2, 2, 3);
-plotMethodStats(knn1HIMeanER, knn1HIStdER, trainingSizePercentages,...
-    sprintf('Knn1\nHistograms, no filtering'));
-subplot(2, 2, 4);
-plotMethodStats(knn1HGMeanER, knn1HGStdER, trainingSizePercentages,...
-    sprintf('Knn1\nHistograms, gaussian filtering'));
+    sprintf('Knn1\nExtended and Filtered samples'));
+% subplot(2, 2, 2);
+% plotMethodStats(rndMeanER, rndStdER, trainingSizePercentages, 'Random');
+% subplot(2, 2, 3);
+% plotMethodStats(knn1HIMeanER, knn1HIStdER, trainingSizePercentages,...
+%     sprintf('Knn1\nHistograms, no filtering'));
+% subplot(2, 2, 4);
+% plotMethodStats(knn1HGMeanER, knn1HGStdER, trainingSizePercentages,...
+%     sprintf('Knn1\nHistograms, gaussian filtering'));
 
 % % Plots for each class
 % classNumber = max(dataClasses);
