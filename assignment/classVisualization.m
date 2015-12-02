@@ -44,14 +44,19 @@ for cl = 1:classNumber
         idx = class1Indices(i);
         sample = reshape(data(:,idx), size(data, 1)/3, 3);
         plot3(sample(:,1), sample(:,2), sample(:,3), 'k:');
-        alpha(0.5);
+        %plot(sample(:,1),'k:');
     end
     az = 45;
     el = 45;
     view(az, el);
     axis([-1 1 -1 1 -1 1]);
+    %axis([1 500 -1 1]);
+    title(sprintf('Class %d', cl));
     hold off
 end
+% subplot(2, ceil(classNumber/2), classNumber + 1);
+% plot(sample(:,1));
+% axis([1 500 -1 1]);
 
 % Timer stop.
 toc;

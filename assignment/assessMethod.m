@@ -14,7 +14,7 @@ function [meanErrorRates, errorRateStds] = assessMethod(data,...
 %                    with training subsets of different sizes
 
 % Assessing params.
-experimentsNumber = 100;
+experimentsNumber = 200;
 
 samplesNumber = length(dataClasses);
 

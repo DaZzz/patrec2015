@@ -40,10 +40,17 @@ bins = 8;
 %data = extract_hist(dataStruct, bins);
 
 % Extract histograms from data (gaussian filtering).
-filter = @(I) imgaussfilt(I, 0.5);
-%filter = @(I) imgaussfilt(I, 1);
+%filter = @(I) imgaussfilt(I, 0.5);
+filter = @(I) imgaussfilt(I, 1);
 %data = extract_gradient(dataStruct, bins, filter);
 %data = extract_hist(dataStruct, bins, filter);
+
+% dataCells = num2cell(reshape(data, size(data,1)/3, 3, size(data,2)),[1 2]);
+% dataCells = reshape(dataCells, size(dataCells, 3), 1);
+%data = extract_gradient(dataCells, bins);
+%data = extract_hist(dataCells, bins);
+%data = extract_gradient(dataCells, bins, filter);
+%data = extract_hist(dataCells, bins, filter);
 
 % Generate training and testing sets.
 randomSampleOrder  = randperm(samplesNumber);

@@ -8,7 +8,7 @@ function dataMatrix = extendAndFilter(dataStruct)
 
 sigma = 15;
 samplesNumber = length(dataStruct);
-maxLength = max(cellfun('size', dataStruct, 1));
+maxLength = 500;
 timePointDimensions = size(dataStruct{1}, 2);
 sampleDimensions = maxLength*timePointDimensions;
 dataMatrix = zeros(sampleDimensions, samplesNumber);
@@ -19,6 +19,7 @@ for i = 1:samplesNumber
     sample(:,1) = imgaussfilt(sample(:,1), sigma);
     sample(:,2) = imgaussfilt(sample(:,2), sigma);
     sample(:,3) = imgaussfilt(sample(:,3), sigma);
+    sample = sample(1:maxLength,:);
     dataMatrix(:, i) = sample(:);
 end
 
