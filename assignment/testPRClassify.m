@@ -25,14 +25,11 @@ for i = 1:samplesNumber
     tokens = regexp(files(i).name, 'p(\d+)m(\d+)d(\d+).mat', 'tokens');
     dataClasses(i) = str2double(tokens{1}{2});
     d = load([dataFolder,files(i).name], '-ascii');
-    d = d ./ 255 * 2 - 1;
     dataStruct{i} = d;
 end
 
 % Generate training and testing sets.
-%rng(1);
 sampleOrder  = randperm(samplesNumber);
-%testingSamplesIDs  = sampleOrder(end/2+1:end);
 testingSamplesIDs  = sampleOrder;
 testingClasses = dataClasses(testingSamplesIDs);
 testingSize = length(testingClasses);
