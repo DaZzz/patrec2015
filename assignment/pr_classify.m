@@ -30,17 +30,10 @@ if (isempty(trainingClasses))
 
     % Feature extraction.
     trainingData = extendAndFilter(dataStruct);
-
-%     % Generate training and testing sets.
-%     rng(1);
-%     sampleOrder  = randperm(samplesNumber);
-%     trainingSamplesIDs = sampleOrder(1:end/2);
-%     trainingData = trainingData(:,trainingSamplesIDs);
-%     trainingClasses = trainingClasses(trainingSamplesIDs);
 end
 
 % Testing features extraction.
-testingData = extendAndFilter({data});
+testingData = extendAndFilter({data ./ 255 * 2 - 1});
 
 % Classification.
 dataclass = knn(trainingClasses, trainingData, testingData, 1);
